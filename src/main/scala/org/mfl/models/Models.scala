@@ -1,5 +1,7 @@
 package org.mfl.models
 
+import java.time.{LocalDateTime, OffsetDateTime}
+
 case class StationInformation(
 	                             stationId: Int,
 	                             name: String,
@@ -38,3 +40,30 @@ case class ApiResponseWithAllStationStatusData(
                                               )
 
 case class Station(status: StationStatus, info: StationInformation)
+
+//Data Hw
+case class NormalizedStationRecord(
+	                                  stationName: String,
+	                                  stationCode: String,
+	                                  nbEBike: Int,
+	                                  nbFreeDock: Int,
+	                                  nbBike: Int,
+	                                  timestamp: OffsetDateTime
+                                  )
+
+case class RecordFields(
+	                       stationName: String,
+	                       stationCode: String,
+	                       nbEBike: Int,
+	                       nbFreeDock: Int,
+	                       nbBike: Int
+                       )
+
+case class StationRecord(
+	                        fields: RecordFields,
+	                        recordTimestamp: String
+                        )
+
+case class Row(
+              records: Seq[StationRecord]
+              )
