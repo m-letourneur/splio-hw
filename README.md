@@ -80,5 +80,20 @@ Example of response stored at `./data/sample-api-information-response.json`
     This requires a call StationInformation endpoint. It filters and consolidate data at the same time.
     - print the list of stations with both their name and the number of available bikes.
 
+## Data
 
+Dataset velib_dataset_c271c5d8-6b77-4557-845c-3b449863bbb0.txt.
+
+Compute:
+
+- the average number of available Velib’ per station and per day’s hour to know what
+is the best time to take a bike and in which station.
+- the average number of available docks per station and per day’s hour to know what
+is the best time to put a bike and in which station.
+- the Velib’ stations top 3 with the more available bikes per day
+
+
+
+The dataset contains rows of JSON.
+Looking at one row (`./data/row.json`), it seems we have the state of 10 Velib stations at a given point in time.programmatically
 
