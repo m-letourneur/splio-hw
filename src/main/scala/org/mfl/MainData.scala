@@ -1,11 +1,15 @@
+package org.mfl
+
 import java.time.OffsetDateTime
 
-import org.mfl.models.{NormalizedStationRecord, Row}
+import models.{NormalizedStationRecord, Row}
 import spray.json._
-import org.mfl.utils.JsonSupport._
+import utils.JsonSupport._
 import scala.io.Source
 
-
+/**
+ * Main for the Data task
+ */
 object MainData extends App {
 
 	val absPath        = "./data" +
@@ -13,17 +17,16 @@ object MainData extends App {
 	                     "-3b449863bbb0.txt"
 	val source: String = Source.fromFile(absPath).getLines.mkString
 
-	//Parse lines of the file
+	//Parse lines of the file and deserialize JSONs
 	val rows = Source.fromFile(absPath).getLines.map { line =>
 		val json = line.parseJson
 		json.convertTo[Row]
 	}
-
 	val s   = rows.toList.flatMap(_.records)
 	val len = s.length
-	println(s"Total records: $len")
+	println(s"Total records: $len units")
 
-	//Convert
+	//Normalize records (and datetime)
 	val normalizedS = s.map(rec =>
 		                        NormalizedStationRecord(
 			                        stationName = rec.fields.stationName,
@@ -39,10 +42,10 @@ object MainData extends App {
 	// Describe dataset
 	val nbDates = normalizedS.groupBy(rec => (rec.timestamp.getDayOfYear, rec
 		.timestamp.getYear)).size
-	println(s"$nbDates dates is this dataset as expected (1 day)")
+	println(s"$nbDates dates in this dataset as expected (1 day)")
 
 	val nbHours = normalizedS.groupBy(rec => (rec.timestamp.getHour)).size
-	println(s"$nbHours hours is this dataset as expected (12 hours)")
+	println(s"$nbHours hours in this dataset as expected (12 hours)")
 
 	val nbStations = normalizedS.groupBy(rec => (rec.stationCode)).size
 	println(s"$nbStations different stations are available")
@@ -54,8 +57,10 @@ object MainData extends App {
 			                                                 .groupBy(_.timestamp
 			                                                           .getHour))
 
-	// Task #1
-	// Bikes availbility
+	/**
+	 * Task #1
+	 * Bikes availability
+	 */
 	println("\n\nTask #1")
 	println("Bikes availability per station, per hour of the day")
 
@@ -82,9 +87,10 @@ object MainData extends App {
 	println(s"$bestStation has the best Velib availability " +
 	        s"(mean=${bestAvailability}) in average at ${bestHour}h")
 
-
-	// Task #2
-	// Dock availability
+	/**
+	 * Task #2
+	 * Dock availability
+	 */
 	println("\n\nTask #2")
 	println("Dock availability per station, per hour of the day")
 	val gbPerStationPerHourAvailableDocksMean = gbPerStation
@@ -106,8 +112,10 @@ object MainData extends App {
 	        s"(mean  = ${bestDockAvailability}) docks available in average at " +
 	        s"${bestDockHour}h")
 
-
-	//3 Best daily stations
+	/**
+	 * Task #3
+	 * Best daily stations
+	 */
 	println("\n\nTask #3")
 	println("Stations TOP-3")
 	val gbPerStationDailyMean = gbPerStation.mapValues(listRec =>
@@ -118,8 +126,8 @@ object MainData extends App {
 	                                                 .take(3)
 	threeBestStations.foreach(rec =>
 		                          println(s"${rec._1} is in top-3, with daily " +
-		                                  s"Velib availability of ${rec._2} bikes " +
+		                                  s"Velib availability of ${rec._2} bikes" +
+		                                  s" " +
 		                                  s"on average")
 	                          )
 }
-

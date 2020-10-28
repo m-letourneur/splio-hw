@@ -6,6 +6,9 @@ import spray.json.{DefaultJsonProtocol, RootJsonFormat}
 
 import scala.io.Source
 
+/**
+ * Deserialization protocols for endpoints JSON responses
+ * */
 trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
 	implicit val stationInformationFormat: RootJsonFormat[StationInformation] = jsonFormat(
 		StationInformation,

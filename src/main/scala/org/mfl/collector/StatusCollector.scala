@@ -11,6 +11,12 @@ import org.mfl.utils.JsonSupport
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration._
 
+/**
+ * Connector to the Velib' `Station Status` endpoint.
+ *
+ * Fetch, deserialize/load to case class and filter Stations based on
+ * bike availability predicate.
+ */
 class StatusCollector extends JsonSupport {
 
 	val uri = "https://velib-metropole-opendata.smoove" +
@@ -23,14 +29,21 @@ class StatusCollector extends JsonSupport {
 		HttpRequest(uri = uri)
 		)
 
+	/**
+	 * Bike availability predicate: True if at least 1 bike is available at the
+	 * station
+	 **/
 	def hasAvailableBikes(stationStatus: StationStatus): Boolean = {
 		//True if some bikes are available on the station
 		stationStatus.numBikesAvailable > 0
 	}
 
+	/**
+	 * Processing: deserialize the response to list and apply filter
+	 **/
 	def runRequest(req: HttpRequest)
-	              (implicit system: ActorSystem,
-	               executionContext: ExecutionContext)
+	              (implicit system                  : ActorSystem,
+	               executionContext                 : ExecutionContext)
 	: Future[List[StationStatus]]
 	= {
 		Http()
@@ -44,8 +57,12 @@ class StatusCollector extends JsonSupport {
 			      )
 	}
 
-	def toSink(pf: List[StationStatus] => Unit)(implicit system : ActorSystem,
-	                                            executionContext: ExecutionContext)
+	/**
+	 * Continuously process requests and apply sink method on results
+	 * (`println` for instance)
+	 */
+	def toSink(pf  : List[StationStatus] => Unit)(implicit system: ActorSystem,
+	                                              executionContext: ExecutionContext)
 	: Unit = {
 		requests
 			.mapAsync(1)(req => runRequest(req))

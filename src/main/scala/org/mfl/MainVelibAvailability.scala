@@ -1,7 +1,12 @@
+package org.mfl
+
 import akka.actor.ActorSystem
 import org.mfl.collector.{InformationCollector, StatusCollector}
 import org.mfl.models.{Station, StationStatus}
 
+/**
+ * Main for the Application task
+ */
 object MainVelibAvailability extends App {
 
 	implicit val system     = ActorSystem()
@@ -10,6 +15,9 @@ object MainVelibAvailability extends App {
 	val infoCollector   = new InformationCollector()
 	val statusCollector = new StatusCollector()
 
+	/**
+	 * Consolidate list of Stations merging Status and Information
+	 */
 	def getConsolidateRelevantStations(sList: List[StationStatus]) = {
 		for {
 			listRelevantStationInformation <- infoCollector.collectRelevantStations
@@ -25,16 +33,17 @@ object MainVelibAvailability extends App {
 		}
 	}
 
-
 	def printConsolidatedStation(station: Station) = {
 		println(s"${station.status.numBikesAvailable} bikes available at station" +
 		        s" ${station.info.name}")
 	}
 
-	//Continuously fetch station status endpoint and consolidate the data
-	//With station information
-	//Print all the stations that are within the search area, with station name
-	//and the number of bikes available
+	/**
+	 * Continuously fetch station status endpoint and consolidate the data
+	 * with station information.
+	 * Print all the stations that are within the search area, with station name
+	 * and the number of bikes available
+	 */
 	statusCollector.toSink(
 		l => {
 			getConsolidateRelevantStations(l)
