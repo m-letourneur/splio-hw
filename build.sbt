@@ -14,3 +14,6 @@ lazy val akkaDependencies = Seq(
 	"io.spray" %% "spray-json" % "1.3.5"
 	)
 libraryDependencies ++= akkaDependencies
+
+enablePlugins(JavaAppPackaging)
+
