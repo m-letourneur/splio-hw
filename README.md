@@ -82,6 +82,7 @@ We use part of the Akka framework:
 - this application is missing tests (unit tests [ensure deserialization consistency, check processing logic], integration tests [check endpoints response schemas is aligned with internal models])
 - health check for endpoints might be added (~integration test before running the app)
 - if we suppose that StationInformation is mostly stable (does not get updated on a daily basis), we could cache it to avoid one unecessary API call each minute.
+- missing a scala
 
 ### Package and run the App (org.mfl.MainVelibAvailability)
 
